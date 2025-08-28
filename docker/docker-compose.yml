@@ -1,0 +1,51 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+      target: backend
+    container_name: vynl-backend
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000
+    volumes:
+      - ../backend/app:/backend/app
+    environment:
+      - ENV=production
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+
+  frontend:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+      target: frontend
+    container_name: vynl-frontend
+    working_dir: /frontend
+    command: npm run start
+    volumes:
+      - ../frontend:/frontend
+      - /frontend/node_modules
+    ports:
+      - "3000:3000"
+    environment:
+      - ENV=production
+
+  db:
+    image: postgres:15
+    container_name: vynl-db
+    restart: always
+    volumes:
+      - vynl-db-data:/var/lib/postgresql/data
+      - ../database/init.sql:/docker-entrypoint-initdb.d/init.sql
+    environment:
+      POSTGRES_DB: vynl
+      POSTGRES_USER: vynluser
+      POSTGRES_PASSWORD: vynlpass
+    ports:
+      - "5432:5432"
+
+volumes:
+  vynl-db-data:
