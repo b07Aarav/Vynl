@@ -1,0 +1,15 @@
+import { render, screen } from '@testing-library/react';
+import PlaylistPage from '../app/playlist/page';
+
+jest.mock('../lib/api', () => ({
+  getPlaylists: jest.fn(() => Promise.resolve([
+    { id: '1', name: 'Test', mood: 'Happy', description: 'Desc', tracks: [] }
+  ]))
+}));
+
+describe('PlaylistPage', () => {
+  it('renders playlist items', async () => {
+    render(<PlaylistPage />);
+    expect(await screen.findByText('Test')).toBeInTheDocument();
+  });
+});
