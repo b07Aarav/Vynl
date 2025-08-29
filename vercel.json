@@ -1,0 +1,8 @@
+// File: vercel.json
+{
+  "projects": {
+    "vynl": {
+      "rootDirectory": "frontend"
+    }
+  }
+}
